@@ -1,0 +1,23 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: amatya-db
+    environment:
+      POSTGRES_USER: amatya
+      POSTGRES_PASSWORD: amatya
+      POSTGRES_DB: amatya
+    ports:
+      - "5432:5432"
+    # Files in this directory run once, in name order, on first start:
+    # schema, then the engine, then the demo data.
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d:ro
+      - amatya-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U amatya -d amatya"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  amatya-pgdata:
